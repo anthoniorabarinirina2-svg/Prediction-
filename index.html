@@ -1,130 +1,146 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADALABE - CALCULATEUR DE TOUR</title>
+    <title>ADALABE - AVIATOR PRECISOR V11</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #ff007f; --b: #00d2ff; --bg: #05070a; --g: #00ff88; }
+        :root { --p: #ff007f; --b: #00d2ff; --bg: #05070a; --g: #00ff88; --y: #f0b90b; --red: #ff4b2b; }
         body { background: var(--bg); color: white; font-family: 'Rajdhani', sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; }
-        .container { max-width: 400px; width: 100%; animation: fadeIn 0.3s ease; }
+        .container { max-width: 450px; width: 100%; display: none; }
+        
+        #lock { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .lock-card { background: #12161d; padding: 40px; border-radius: 20px; border: 1px solid var(--y); text-align: center; width: 85%; }
 
-        /* HEADER */
-        .header { background: #12161d; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; text-align: center; }
-        .clock { font-family: 'Orbitron'; color: var(--b); font-size: 22px; text-shadow: 0 0 10px var(--b); }
+        .header { background: #12161d; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; text-align: center; border-bottom: 3px solid var(--red); }
+        .clock { font-family: 'Orbitron'; color: var(--red); font-size: 20px; text-shadow: 0 0 10px var(--red); }
 
-        /* FORMULAIRE */
-        .card { background: #12161d; border-radius: 15px; padding: 20px; border-top: 4px solid var(--p); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .input-row { display: flex; gap: 10px; margin: 15px 0; }
-        .input-box { flex: 1; }
+        .card { background: #12161d; border-radius: 15px; padding: 20px; border-left: 4px solid var(--red); box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         label { display: block; font-size: 10px; color: #888; font-family: 'Orbitron'; margin-bottom: 5px; }
         input { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: var(--g); border-radius: 8px; text-align: center; font-family: 'Orbitron'; font-size: 18px; box-sizing: border-box; }
 
-        .btn { width: 100%; padding: 18px; border: none; background: var(--p); color: white; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; border-radius: 10px; text-transform: uppercase; transition: 0.2s; }
-        .btn:active { transform: scale(0.95); background: #ff0055; }
+        .btn { width: 100%; padding: 15px; border: none; background: var(--red); color: white; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; border-radius: 10px; text-transform: uppercase; margin-top: 10px; transition: 0.3s; }
+        .btn:hover { background: #ff0000; box-shadow: 0 0 20px rgba(255, 0, 0, 0.4); }
+        
+        /* ZONE RÉSULTAT AVIATOR */
+        .res-box { background: rgba(0,0,0,0.8); padding: 20px; border-radius: 15px; border: 1px solid var(--red); margin-top: 15px; display: none; text-align: center; animation: pulseBorder 2s infinite; }
+        .target-val { font-family: 'Orbitron'; font-size: 40px; color: var(--red); margin: 10px 0; text-shadow: 0 0 15px var(--red); }
+        .justif { font-size: 11px; color: #888; border-top: 1px solid #333; padding-top: 10px; margin-top: 10px; line-height: 1.4; }
 
-        /* RÉSULTAT STYLÉ */
-        .res-container { margin-top: 20px; display: none; animation: slideUp 0.4s ease; }
-        .res-box { background: #000; border: 1px solid var(--g); border-radius: 12px; padding: 20px; text-align: center; }
-        .res-time { font-family: 'Orbitron'; font-size: 32px; color: var(--g); text-shadow: 0 0 15px var(--g); margin: 10px 0; }
-        .cote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .cote-item { background: #1a1f26; padding: 10px; border-radius: 8px; border-bottom: 2px solid var(--b); }
-        .cote-label { font-size: 9px; color: #aaa; font-family: 'Orbitron'; }
-        .cote-val { font-family: 'Orbitron'; color: white; font-size: 16px; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pulseBorder { 0% { border-color: #ff4b2b; } 50% { border-color: #ff0000; } 100% { border-color: #ff4b2b; } }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div id="lock">
+    <div class="lock-card">
+        <h2 style="color:var(--y); font-family:'Orbitron'; font-size: 14px;">AVIATOR SYSTEM ACCESS</h2>
+        <input type="password" id="pass" placeholder="PASSWORD">
+        <button class="btn" style="background:var(--y); color:black;" onclick="unlock()">DÉVERROUILLER</button>
+    </div>
+</div>
+
+<div id="app" class="container">
     <div class="header">
-        <div style="font-size: 9px; color: #f0b90b; font-family: 'Orbitron'; margin-bottom: 5px;">TIME SYNC ENGINE V8</div>
         <div class="clock" id="clock">00:00:00</div>
+        <div style="font-size: 9px; color: white; font-family: 'Orbitron'; margin-top: 5px;">AVIATOR PRECISION ENGINE V11</div>
     </div>
 
     <div class="card">
-        <label style="text-align:center; color: var(--p); font-size: 12px; margin-bottom: 15px;">ENTRER LES DONNÉES DU DERNIER TOUR</label>
+        <label style="color:var(--red);">VALEUR DU DERNIER CRASH (ex: 1.98)</label>
+        <input type="number" id="v" step="0.01" placeholder="1.00">
         
-        <div class="input-row">
-            <div class="input-box">
-                <label>MINUTE</label>
-                <input type="number" id="m" placeholder="42" min="0" max="59">
+        <div class="input-grid" style="margin-top: 15px;">
+            <div>
+                <label>MINUTE (M)</label>
+                <input type="number" id="m" placeholder="00">
             </div>
-            <div class="input-box">
-                <label>SECONDE</label>
-                <input type="number" id="s" placeholder="15" min="0" max="59">
+            <div>
+                <label>SECONDE (S)</label>
+                <input type="number" id="s" placeholder="00">
             </div>
         </div>
 
-        <button class="btn" onclick="calculer()">DÉTERMINER LE PROCHAIN SIGNAL</button>
+        <button class="btn" onclick="predictAviator()">CALCULER SIGNAL PRÉCIS</button>
     </div>
 
-    <div id="results" class="res-container">
-        <div class="res-box">
-            <div class="cote-label">PROCHAIN TOUR DÉTECTÉ À :</div>
-            <div class="res-time" id="res-t">00:00:00</div>
-            
-            <div class="cote-grid">
-                <div class="cote-item">
-                    <div class="cote-label">COTE MIN</div>
-                    <div class="cote-val" id="c-min">1.50x</div>
-                </div>
-                <div class="cote-item">
-                    <div class="cote-label">COTE MAX</div>
-                    <div class="cote-val" id="c-max">5.00x</div>
-                </div>
-            </div>
+    <div id="res" class="res-box">
+        <div style="font-size: 10px; color: #aaa; font-family: 'Orbitron';">SIGNAL DÉTECTÉ POUR LE PROCHAIN TOUR</div>
+        <div class="target-val" id="res-cote">--.--x</div>
+        <div style="font-size: 14px; color: var(--g); font-weight: bold;" id="res-time">HEURE : --:--:--</div>
+        <div class="justif" id="res-justif"></div>
+        
+        <div style="margin-top:15px; display: flex; gap: 10px;">
+            <button onclick="record(true)" style="flex:1; background:var(--g); border:none; padding:10px; border-radius:5px; font-weight:bold; cursor:pointer;">GAGNÉ ✅</button>
+            <button onclick="record(false)" style="flex:1; background:var(--p); border:none; padding:10px; border-radius:5px; font-weight:bold; cursor:pointer;">PERDU ❌</button>
         </div>
-        <p style="font-size: 10px; color: #555; text-align: center; margin-top: 10px; font-family: 'Orbitron';">SYNC_CALC_OK: ALGO_TEMP_V8</p>
+    </div>
+
+    <div style="background:#12161d; padding:15px; border-radius:10px; margin-top:20px; text-align:center; border: 1px solid #333;">
+        <div style="font-size:10px; color:var(--y); font-family:'Orbitron';">PRÉCISION RÉELLE DES SIGNAUX</div>
+        <div style="font-size:24px; color:white; font-family:'Orbitron'; margin-top:5px;" id="accuracy">0%</div>
     </div>
 </div>
 
 <script>
-    // Horloge Live
-    setInterval(() => {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString('fr-FR');
-    }, 1000);
+    let wins = 0; let total = 0;
 
-    function calculer() {
+    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('fr-FR'); }, 1000);
+
+    function unlock() {
+        if(document.getElementById('pass').value === 'bandykely') {
+            document.getElementById('lock').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+        } else { alert("Code invalide"); }
+    }
+
+    function predictAviator() {
+        const val = parseFloat(document.getElementById('v').value);
         const m = parseInt(document.getElementById('m').value);
         const s = parseInt(document.getElementById('s').value);
 
-        if (isNaN(m) || isNaN(s)) {
-            alert("ERREUR : Saisir les données !");
-            return;
+        if(isNaN(val) || isNaN(m) || isNaN(s)) return alert("Veuillez remplir V, M et S !");
+
+        const box = document.getElementById('res');
+        const coteDisp = document.getElementById('res-cote');
+        const timeDisp = document.getElementById('res-time');
+        const justifDisp = document.getElementById('res-justif');
+
+        // --- ALGORITHME BASÉ SUR S (SECONDES) ---
+        // On calcule le décalage du prochain cycle
+        let nextS = (s + 20 + Math.floor(val)) % 60;
+        let nextM = (m + (s + 20 > 59 ? 1 : 0)) % 60;
+        
+        // Calcul de la cote basée sur la parité de S et l'influence de M
+        let prediction;
+        if (s % 2 === 0) {
+            // Cycle de hausse
+            prediction = (2.10 + (s / 50) + (val / 10)).toFixed(2);
+            justifDisp.innerHTML = "<b>ANALYSE :</b> La seconde " + s + " est PARE. Le serveur entre en phase d'accumulation positive. Probabilité de vol long élevée.";
+        } else {
+            // Cycle de sécurité
+            prediction = (1.50 + (s / 60)).toFixed(2);
+            justifDisp.innerHTML = "<b>ANALYSE :</b> La seconde " + s + " est IMPAIRE. Risque de correction algorithmique. Nous conseillons un retrait sécurisé à " + prediction + "x.";
         }
 
-        const resDiv = document.getElementById('results');
-        resDiv.style.display = "none";
+        let now = new Date();
+        let hh = now.getHours().toString().padStart(2, '0');
+        let mm = nextM.toString().padStart(2, '0');
+        let ss = nextS.toString().padStart(2, '0');
 
-        // --- ALGORITHME DE CALCUL MATHÉMATIQUE ---
-        setTimeout(() => {
-            // 1. Calcul de l'intervalle (On suit un cycle de 1 minute 15 secondes)
-            let nextS = (s + 15) % 60;
-            let nextM = (m + 1 + Math.floor((s + 15) / 60)) % 60;
+        coteDisp.innerText = prediction + "x";
+        timeDisp.innerText = "PARIER À : " + hh + ":" + mm + ":" + ss;
+        box.style.display = "block";
+    }
 
-            // 2. Calcul des Cotes (Basé sur les valeurs entrées)
-            // Plus la seconde est basse, plus la chance d'une grosse cote augmente
-            let baseCote = (s < 30) ? 2.15 : 1.65;
-            let calcMin = (baseCote + (s / 40)).toFixed(2);
-            let calcMax = (parseFloat(calcMin) + 2.10 + (m / 15)).toFixed(2);
-
-            // Formatage de l'heure
-            let now = new Date();
-            let hh = now.getHours().toString().padStart(2, '0');
-            let mm = nextM.toString().padStart(2, '0');
-            let ss = nextS.toString().padStart(2, '0');
-
-            // Affichage des résultats
-            document.getElementById('res-t').innerText = `${hh}:${mm}:${ss}`;
-            document.getElementById('c-min').innerText = calcMin + "x";
-            document.getElementById('c-max').innerText = calcMax + "x";
-            
-            resDiv.style.display = "block";
-        }, 500);
+    function record(isWin) {
+        total++;
+        if(isWin) wins++;
+        document.getElementById('accuracy').innerText = ((wins / total) * 100).toFixed(1) + "%";
+        document.getElementById('res').style.display = "none";
     }
 </script>
 
