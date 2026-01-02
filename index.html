@@ -3,35 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADALABE AI - UNIFIED</title>
+    <title>ADALABE AI - CYCLE PREDICTOR</title>
     <style>
         :root { --pink: #ff007f; --blue: #00d2ff; --bg: #0b0e11; --card: #1e2329; --gold: #f0b90b; --green: #00ff88; }
         body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 10px; text-align: center; }
         .container { max-width: 420px; margin: auto; display: none; }
         
-        /* Onglets */
         .tabs { display: flex; gap: 5px; margin-bottom: 15px; }
         .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #1e2329; color: #888; }
-        .tab-btn.active { background: var(--pink); color: white; }
+        .tab-btn.active { background: var(--pink); color: white; border: 1px solid var(--pink); }
 
-        /* Sections */
         .section { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid #333; display: none; }
         .section.active { display: block; }
 
-        /* Design CosmoX */
         .cosmo-display { padding: 20px; border: 2px solid var(--pink); border-radius: 15px; margin: 15px 0; background: #000; text-align: left; }
-        .time-signal { font-size: 18px; color: var(--gold); font-weight: bold; margin-bottom: 10px; display: block; text-align: center; }
-        .instruction { margin: 10px 0; font-size: 15px; border-bottom: 1px solid #222; padding-bottom: 5px; overflow: hidden; }
-        .val-text { font-weight: bold; color: var(--pink); float: right; }
-        .val-green { font-weight: bold; color: var(--green); float: right; }
+        .data-row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 15px; border-bottom: 1px solid #111; padding-bottom: 5px; }
+        .val-green { font-weight: bold; color: var(--green); }
+        .val-pink { font-weight: bold; color: var(--pink); }
 
-        /* Boutons et Inputs */
         .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #444; background: #000; color: #fff; text-align: center; box-sizing: border-box; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #444; background: #000; color: #fff; text-align: center; box-sizing: border-box; font-size: 16px; }
         
-        /* Résultat Foot */
-        #foot-res { margin-top: 20px; font-weight: bold; color: var(--green); font-size: 18px; padding: 10px; border-radius: 10px; }
-
         #lock { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; justify-content: center; align-items: center; }
     </style>
 </head>
@@ -41,37 +33,41 @@
         <div style="background:var(--card); padding:30px; border-radius:20px; border:1px solid var(--gold); width:85%;">
             <h2 style="color:var(--gold)">ADALABE SYSTEM</h2>
             <input type="password" id="pass" placeholder="PASSWORD">
-            <button class="btn" style="background:var(--gold);" onclick="unlock()">INITIALISER</button>
+            <button class="btn" style="background:var(--gold);" onclick="unlock()">ENTRER</button>
         </div>
     </div>
 
     <div id="app" class="container">
         <div class="tabs">
-            <button class="tab-btn active" id="btn1" onclick="switchTab(1)">COSMOX AI</button>
-            <button class="tab-btn" id="btn2" onclick="switchTab(2)">FOOT SCAN</button>
+            <button class="tab-btn active" id="btn1" onclick="switchTab(1)">COSMOX CALCUL</button>
+            <button class="tab-btn" id="btn2" onclick="switchTab(2)">MATCH WINNER</button>
         </div>
 
         <div id="sec1" class="section active">
-            <h3 style="color:var(--pink); margin-top:0;">CYCLE TEMPOREL</h3>
+            <h3 style="color:var(--pink); margin-top:0;">CALCUL PAR TOUR</h3>
+            <p style="font-size:11px; color:#aaa; margin-bottom:15px;">Saisissez l'heure du dernier crash :</p>
             
-            <div id="cosmo-box" style="display:none;">
-                <div class="cosmo-display">
-                    <span class="time-signal" id="sig-time">00h 00mn 00s</span>
-                    <div class="instruction">🔴 ENTRÉE : <span class="val-text">IMMÉDIATE</span></div>
-                    <div class="instruction">🟢 RETRAIT MIN : <span class="val-green" id="min-val">0.00x</span></div>
-                    <div class="instruction">💎 RETRAIT MAX : <span class="val-green" id="max-val">0.00x</span></div>
-                </div>
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="last-min" placeholder="Minute (ex: 15)">
+                <input type="number" id="last-sec" placeholder="Seconde (ex: 45)">
             </div>
 
-            <button class="btn" style="background:var(--pink); color:white;" onclick="genererCosmo()">PRÉDIRE PROCHAIN VOL</button>
-            <p style="font-size:10px; color:#666; margin-top:10px;">Calculé sur la base de la seconde exacte du serveur.</p>
+            <button class="btn" style="background:var(--pink); color:white;" onclick="calculerProchainTour()">CALCULER PROCHAIN TOUR</button>
+
+            <div id="result-box" style="display:none; margin-top:20px;">
+                <div class="cosmo-display">
+                    <div class="data-row"><span>PROCHAIN TOUR :</span> <span class="val-pink" id="next-time">--:--</span></div>
+                    <div class="data-row"><span>RETRAIT MIN :</span> <span class="val-green" id="min-v">0.00x</span></div>
+                    <div class="data-row"><span>RETRAIT MAX :</span> <span class="val-green" id="max-v">0.00x</span></div>
+                </div>
+            </div>
         </div>
 
         <div id="sec2" class="section">
             <h3 style="color:var(--blue); margin-top:0;">SCANNER BET261</h3>
             <input type="text" id="s-input" placeholder="Ex: Madagascar vs Egypte">
             <button class="btn" style="background:var(--blue); color:white;" onclick="rechercherFoot()">NOM DU GAGNANT</button>
-            <div id="foot-res"></div>
+            <div id="foot-res" style="margin-top:20px; font-weight:bold; color:var(--green); font-size:18px;"></div>
         </div>
     </div>
 
@@ -80,7 +76,7 @@
             if(document.getElementById('pass').value.toLowerCase().trim() === 'adalabe') {
                 document.getElementById('lock').style.display = 'none';
                 document.getElementById('app').style.display = 'block';
-            } else { alert("Mot de passe incorrect"); }
+            } else { alert("Accès refusé"); }
         }
 
         function switchTab(n) {
@@ -90,38 +86,24 @@
             document.getElementById('btn2').classList.toggle('active', n === 2);
         }
 
-        // --- ALGORITHME COSMOX ---
-        function genererCosmo() {
-            const now = new Date();
-            const h = now.getHours();
-            const m = now.getMinutes();
-            const s = now.getSeconds();
+        // --- ALGORITHME COSMOX PAR DERNIER TOUR ---
+        function calculerProchainTour() {
+            const m = parseInt(document.getElementById('last-min').value);
+            const s = parseInt(document.getElementById('last-sec').value);
 
-            document.getElementById('cosmo-box').style.display = "block";
-            document.getElementById('sig-time').innerText = h + "h " + m + "mn " + s + "s";
+            if (isNaN(m) || isNaN(s)) return alert("Entrez la minute et la seconde du dernier tour");
 
-            // Calcul des retraits basé sur les secondes du cycle
-            let rMin = (2.15 + (s / 25)).toFixed(2);
-            let rMax = (5.80 + (s / 2)).toFixed(2);
+            document.getElementById('result-box').style.display = "block";
 
-            document.getElementById('min-val').innerText = rMin + "x";
-            document.getElementById('max-val').innerText = rMax + "x";
-        }
-
-        // --- ALGORITHME FOOT (NOM GAGNANT) ---
-        function rechercherFoot() {
-            const val = document.getElementById('s-input').value.trim();
-            if(val.length < 3) return alert("Indiquez le match !");
+            // Logique de cycle : On prédit le tour suivant (souvent 1min 15s après)
+            let nextM = (s + 15 > 59) ? m + 2 : m + 1;
+            let nextS = (s + 15) % 60;
             
-            const res = document.getElementById('foot-res');
-            let t = val.split(/vs|VS|-/);
-            let t1 = t[0].trim();
-            let t2 = t[1] ? t[1].trim() : t1;
-            
-            // Choix du gagnant
-            let gagnant = Math.random() > 0.5 ? t1 : t2;
-            res.innerHTML = "GAGNANT : " + gagnant.toUpperCase();
-        }
-    </script>
-</body>
-</html>
+            document.getElementById('next-time').innerText = nextM + "mn " + (nextS < 10 ? '0'+nextS : nextS) + "s";
+
+            // Algorithme de calcul des cotes basé sur la graine (seed) du dernier tour
+            let seed = m + s;
+            let rMin = (2.20 + (seed % 5) / 2).toFixed(2);
+            let rMax = (parseFloat(rMin) + 3.5 + (s / 10)).toFixed(2);
+
+            document.
