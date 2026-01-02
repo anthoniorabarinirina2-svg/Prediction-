@@ -3,179 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADALABE AI - ANALYSEUR CYCLIQUE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <title>ADALABE - CALCULATEUR DE TOUR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --pink: #ff007f; --blue: #00d2ff; --bg: #05070a; 
-            --card: rgba(20, 24, 30, 0.98); --gold: #f0b90b; 
-            --green: #00ff88; --shadow: 0 0 20px rgba(255, 0, 127, 0.4);
-        }
+        :root { --p: #ff007f; --b: #00d2ff; --bg: #05070a; --g: #00ff88; }
+        body { background: var(--bg); color: white; font-family: 'Rajdhani', sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; }
+        .container { max-width: 400px; width: 100%; animation: fadeIn 0.3s ease; }
 
-        body { 
-            background: var(--bg); 
-            background-image: radial-gradient(circle at center, #1a0b16 0%, #05070a 100%);
-            color: white; font-family: 'Rajdhani', sans-serif; 
-            margin: 0; padding: 10px; display: flex; justify-content: center;
-        }
+        /* HEADER */
+        .header { background: #12161d; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; text-align: center; }
+        .clock { font-family: 'Orbitron'; color: var(--b); font-size: 22px; text-shadow: 0 0 10px var(--b); }
 
-        .container { max-width: 420px; width: 100%; display: none; animation: fadeIn 0.5s ease; }
+        /* FORMULAIRE */
+        .card { background: #12161d; border-radius: 15px; padding: 20px; border-top: 4px solid var(--p); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .input-row { display: flex; gap: 10px; margin: 15px 0; }
+        .input-box { flex: 1; }
+        label { display: block; font-size: 10px; color: #888; font-family: 'Orbitron'; margin-bottom: 5px; }
+        input { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: var(--g); border-radius: 8px; text-align: center; font-family: 'Orbitron'; font-size: 18px; box-sizing: border-box; }
 
-        .header { 
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255, 255, 255, 0.05); padding: 12px;
-            border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 20px;
-        }
-        .clock-live { font-family: 'Orbitron'; font-size: 20px; color: var(--blue); text-shadow: 0 0 10px var(--blue); }
+        .btn { width: 100%; padding: 18px; border: none; background: var(--p); color: white; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; border-radius: 10px; text-transform: uppercase; transition: 0.2s; }
+        .btn:active { transform: scale(0.95); background: #ff0055; }
 
-        .section { 
-            background: var(--card); border-radius: 20px; padding: 25px; 
-            border: 1px solid #2a2f3a; border-top: 4px solid var(--pink);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
+        /* RÉSULTAT STYLÉ */
+        .res-container { margin-top: 20px; display: none; animation: slideUp 0.4s ease; }
+        .res-box { background: #000; border: 1px solid var(--g); border-radius: 12px; padding: 20px; text-align: center; }
+        .res-time { font-family: 'Orbitron'; font-size: 32px; color: var(--g); text-shadow: 0 0 15px var(--g); margin: 10px 0; }
+        .cote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .cote-item { background: #1a1f26; padding: 10px; border-radius: 8px; border-bottom: 2px solid var(--b); }
+        .cote-label { font-size: 9px; color: #aaa; font-family: 'Orbitron'; }
+        .cote-val { font-family: 'Orbitron'; color: white; font-size: 16px; }
 
-        h3 { font-family: 'Orbitron'; font-size: 14px; color: var(--pink); margin-top: 0; text-transform: uppercase; }
-
-        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        .input-field { flex: 1; }
-        label { display: block; font-size: 10px; color: #888; margin-bottom: 5px; font-family: 'Orbitron'; }
-
-        input { 
-            width: 100%; padding: 12px; border-radius: 8px;
-            border: 1px solid #333; background: #000; color: var(--green);
-            font-family: 'Orbitron'; text-align: center; font-size: 16px; box-sizing: border-box;
-        }
-
-        .btn { 
-            width: 100%; padding: 18px; border: none; border-radius: 8px; 
-            font-family: 'Orbitron'; font-weight: bold; cursor: pointer; 
-            font-size: 14px; text-transform: uppercase; transition: 0.2s;
-            background: var(--pink); color: white; box-shadow: var(--shadow);
-        }
-        .btn:active { transform: scale(0.95); }
-
-        /* RESULTATS */
-        .res-card { 
-            margin-top: 25px; padding: 20px; background: rgba(0,0,0,0.5); 
-            border-radius: 15px; border: 1px solid #333; display: none;
-            animation: fadeIn 0.5s;
-        }
-        .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .res-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; text-align: center; }
-        .res-label { font-size: 9px; color: #aaa; font-family: 'Orbitron'; margin-bottom: 5px; }
-        .res-val { font-family: 'Orbitron'; font-size: 18px; color: var(--blue); }
-        .highlight { color: var(--green); font-size: 22px; }
-
-        #lock { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; justify-content: center; align-items: center; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div id="lock">
-        <div style="background:var(--card); padding:40px; border-radius:25px; border:1px solid var(--gold); text-align:center; width:85%; max-width:350px;">
-            <h2 style="color:var(--gold); font-family:'Orbitron'; font-size: 14px;">TIME SYNC ACCESS</h2>
-            <input type="password" id="pass" placeholder="PASSWORD">
-            <button class="btn" style="background:var(--gold); color:black; margin-top:15px;" onclick="unlock()">DÉVERROUILLER</button>
-        </div>
+<div class="container">
+    <div class="header">
+        <div style="font-size: 9px; color: #f0b90b; font-family: 'Orbitron'; margin-bottom: 5px;">TIME SYNC ENGINE V8</div>
+        <div class="clock" id="clock">00:00:00</div>
     </div>
 
-    <div id="app" class="container">
-        <div class="header">
-            <div style="font-size: 10px; color: var(--gold); font-family: 'Orbitron';">ADALABE CYCLIC V7</div>
-            <div class="clock-live" id="clock">00:00:00</div>
-        </div>
+    <div class="card">
+        <label style="text-align:center; color: var(--p); font-size: 12px; margin-bottom: 15px;">ENTRER LES DONNÉES DU DERNIER TOUR</label>
         
-        <div class="section">
-            <h3>Données du Dernier Tour</h3>
-            <div class="input-group">
-                <div class="input-field">
-                    <label>MINUTE</label>
-                    <input type="number" id="in-min" placeholder="00" min="0" max="59">
-                </div>
-                <div class="input-field">
-                    <label>SECONDE</label>
-                    <input type="number" id="in-sec" placeholder="00" min="0" max="59">
-                </div>
+        <div class="input-row">
+            <div class="input-box">
+                <label>MINUTE</label>
+                <input type="number" id="m" placeholder="42" min="0" max="59">
             </div>
+            <div class="input-box">
+                <label>SECONDE</label>
+                <input type="number" id="s" placeholder="15" min="0" max="59">
+            </div>
+        </div>
 
-            <button class="btn" onclick="analyserCycle()">CALCULER PROCHAIN SIGNAL</button>
+        <button class="btn" onclick="calculer()">DÉTERMINER LE PROCHAIN SIGNAL</button>
+    </div>
 
-            <div id="result-box" class="res-card">
-                <div style="text-align: center; margin-bottom: 10px;">
-                    <span style="font-size: 10px; color: var(--gold); font-family: 'Orbitron';">PROCHAIN CRÉNEAU DÉTECTÉ</span>
+    <div id="results" class="res-container">
+        <div class="res-box">
+            <div class="cote-label">PROCHAIN TOUR DÉTECTÉ À :</div>
+            <div class="res-time" id="res-t">00:00:00</div>
+            
+            <div class="cote-grid">
+                <div class="cote-item">
+                    <div class="cote-label">COTE MIN</div>
+                    <div class="cote-val" id="c-min">1.50x</div>
                 </div>
-                
-                <div class="res-item" style="margin-bottom: 15px; border: 1px solid var(--green);">
-                    <div class="res-label">HEURE DE PARI (PRÉCISE)</div>
-                    <div class="res-val highlight" id="res-time">--:--:--</div>
-                </div>
-
-                <div class="res-grid">
-                    <div class="res-item">
-                        <div class="res-label">COTE MINIMUM</div>
-                        <div class="res-val" id="res-min" style="color: var(--pink);">1.50x</div>
-                    </div>
-                    <div class="res-item">
-                        <div class="res-label">COTE MAXIMUM</div>
-                        <div class="res-val" id="res-max" style="color: var(--blue);">5.00x</div>
-                    </div>
+                <div class="cote-item">
+                    <div class="cote-label">COTE MAX</div>
+                    <div class="cote-val" id="c-max">5.00x</div>
                 </div>
             </div>
         </div>
+        <p style="font-size: 10px; color: #555; text-align: center; margin-top: 10px; font-family: 'Orbitron';">SYNC_CALC_OK: ALGO_TEMP_V8</p>
     </div>
+</div>
 
-    <script>
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString('fr-FR');
-        }, 1000);
+<script>
+    // Horloge Live
+    setInterval(() => {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString('fr-FR');
+    }, 1000);
 
-        function unlock() {
-            if(document.getElementById('pass').value.toLowerCase().trim() === 'adalabe') {
-                document.getElementById('lock').style.display = 'none';
-                document.getElementById('app').style.display = 'block';
-            } else { alert("CODE INCORRECT"); }
+    function calculer() {
+        const m = parseInt(document.getElementById('m').value);
+        const s = parseInt(document.getElementById('s').value);
+
+        if (isNaN(m) || isNaN(s)) {
+            alert("ERREUR : Saisir les données !");
+            return;
         }
 
-        function analyserCycle() {
-            const m = parseInt(document.getElementById('in-min').value);
-            const s = parseInt(document.getElementById('in-sec').value);
+        const resDiv = document.getElementById('results');
+        resDiv.style.display = "none";
 
-            if (isNaN(m) || isNaN(s)) {
-                alert("Veuillez entrer la minute et la seconde !");
-                return;
-            }
+        // --- ALGORITHME DE CALCUL MATHÉMATIQUE ---
+        setTimeout(() => {
+            // 1. Calcul de l'intervalle (On suit un cycle de 1 minute 15 secondes)
+            let nextS = (s + 15) % 60;
+            let nextM = (m + 1 + Math.floor((s + 15) / 60)) % 60;
 
-            const resBox = document.getElementById('result-box');
-            resBox.style.display = "none";
+            // 2. Calcul des Cotes (Basé sur les valeurs entrées)
+            // Plus la seconde est basse, plus la chance d'une grosse cote augmente
+            let baseCote = (s < 30) ? 2.15 : 1.65;
+            let calcMin = (baseCote + (s / 40)).toFixed(2);
+            let calcMax = (parseFloat(calcMin) + 2.10 + (m / 15)).toFixed(2);
 
-            setTimeout(() => {
-                // --- ALGORITHME DE CALCUL ---
-                
-                // 1. Calcul de l'heure cible (On ajoute un cycle de 1m30 environ)
-                let targetMin = (m + 1 + Math.floor((s + 25) / 60)) % 60;
-                let targetSec = (s + 25) % 60;
-                
-                // 2. Estimation de la cote Minimum
-                let coteMin = (1.80 + (s / 50)).toFixed(2);
-                
-                // 3. Estimation de la cote Maximum
-                let coteMax = (parseFloat(coteMin) + 2.5 + (m / 10)).toFixed(2);
+            // Formatage de l'heure
+            let now = new Date();
+            let hh = now.getHours().toString().padStart(2, '0');
+            let mm = nextM.toString().padStart(2, '0');
+            let ss = nextS.toString().padStart(2, '0');
 
-                // Formatage de l'heure
-                let now = new Date();
-                let h = now.getHours().toString().padStart(2, '0');
-                let targetM = targetMin.toString().padStart(2, '0');
-                let targetS = targetSec.toString().padStart(2, '0');
+            // Affichage des résultats
+            document.getElementById('res-t').innerText = `${hh}:${mm}:${ss}`;
+            document.getElementById('c-min').innerText = calcMin + "x";
+            document.getElementById('c-max').innerText = calcMax + "x";
+            
+            resDiv.style.display = "block";
+        }, 500);
+    }
+</script>
 
-                // Affichage
-                document.getElementById('res-time').innerText = `${h}:${targetM}:${targetS}`;
-                document.getElementById('res-min').innerText = coteMin + "x";
-                document.getElementById('res-max').innerText = coteMax + "x";
-                
-                resBox.style.display = "block";
-            }, 600);
-        }
-    </script>
 </body>
 </html>
