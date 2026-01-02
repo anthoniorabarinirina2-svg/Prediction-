@@ -3,108 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADALABE PRO</title>
+    <title>ADALABE AI PRO</title>
     <style>
-        body { background: #0b0e11; color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }
-        .card { background: #1e2329; border-radius: 15px; padding: 20px; border: 1px solid #333; margin-bottom: 15px; }
-        
-        /* Écran de verrouillage */
-        #lock { position: fixed; inset: 0; background: #0b0e11; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        
-        /* Contenu principal caché au début */
-        #app { display: none; max-width: 400px; margin: auto; }
-
-        input { width: 90%; padding: 15px; margin: 10px 0; border-radius: 10px; border: 1px solid #444; background: #000; color: #fff; font-size: 16px; box-sizing: border-box; }
-        .btn { width: 90%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; text-transform: uppercase; }
-        
-        .btn-gold { background: #f0b90b; color: black; }
+        body { background: #0b0e11; color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 15px; }
+        .container { max-width: 400px; margin: auto; }
+        .card { background: #1e2329; border-radius: 15px; padding: 20px; border: 1px solid #333; margin-bottom: 20px; }
+        h2 { margin-top: 0; font-size: 20px; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 10px; border: 1px solid #444; background: #000; color: #fff; font-size: 16px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase; }
         .btn-pink { background: #ff007f; color: white; }
         .btn-blue { background: #00d2ff; color: white; }
-
-        .res-box { background: #000; padding: 15px; border-radius: 10px; border: 1px solid #ff007f; margin-top: 15px; text-align: left; }
-        .green { color: #00ff88; font-weight: bold; }
+        .res-box { background: #000; padding: 15px; border-radius: 10px; border: 1px solid #ff007f; margin-top: 15px; text-align: left; line-height: 1.6; }
+        .green { color: #00ff88; font-weight: bold; float: right; }
+        .gold { color: #f0b90b; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="lock">
-        <h1 style="color:#f0b90b">ADALABE AI</h1>
-        <input type="text" id="pass" placeholder="CODE : adalabe">
-        <button class="btn btn-gold" onclick="unlock()">ENTRER DANS LE SYSTÈME</button>
-        <p style="color: #444; margin-top: 20px; font-size: 10px;">Vérifiez que JavaScript est activé</p>
-    </div>
+    <div class="container">
+        <h1 style="color:#f0b90b; margin-bottom: 25px;">ADALABE AI SYSTEM</h1>
 
-    <div id="app">
-        
         <div class="card">
-            <h2 style="color:#ff007f">COSMOX CALCUL</h2>
-            <input type="number" id="m" placeholder="Minute du crash">
-            <input type="number" id="s" placeholder="Seconde du crash">
-            <button class="btn btn-pink" onclick="calculCosmo()">CALCULER LE TOUR</button>
+            <h2 style="color:#ff007f">COSMOX PREDICTOR</h2>
+            <p style="font-size: 12px; color: #aaa;">Entrez les données du dernier tour :</p>
+            <input type="number" id="min_in" placeholder="Minute du crash">
+            <input type="number" id="sec_in" placeholder="Seconde du crash">
+            <button class="btn btn-pink" onclick="calculerCosmo()">CALCULER PROCHAIN TOUR</button>
             
             <div id="cosmo-res" style="display:none" class="res-box">
-                <div>PROCHAIN TOUR : <span class="green" id="next-t">--</span></div>
-                <div>RETRAIT MIN : <span class="green" id="min-v">--</span></div>
-                <div>RETRAIT MAX : <span class="green" id="max-v">--</span></div>
+                <div style="border-bottom: 1px solid #222; padding-bottom: 5px; margin-bottom: 5px;">
+                    TOUR ESTIMÉ : <span class="gold" id="next_t">--</span>
+                </div>
+                <div>RETRAIT MIN : <span class="green" id="min_v">--</span></div>
+                <div>RETRAIT MAX : <span class="green" id="max_v">--</span></div>
             </div>
         </div>
 
         <div class="card">
-            <h2 style="color:#00d2ff">FOOT SCANNER</h2>
-            <input type="text" id="foot-in" placeholder="Ex: Arsenal vs PSG">
-            <button class="btn btn-blue" onclick="scanFoot()">VOIR GAGNANT</button>
-            <div id="foot-res" style="margin-top:15px; font-weight:bold; font-size:20px; color:#00ff88"></div>
+            <h2 style="color:#00d2ff">BET261 FOOT SCAN</h2>
+            <input type="text" id="foot_in" placeholder="Ex: Liverpool vs Real">
+            <button class="btn btn-blue" onclick="trouverGagnant()">VOIR LE GAGNANT</button>
+            <div id="foot_res" style="margin-top:20px; font-weight:bold; font-size:22px; color:#00ff88"></div>
         </div>
-
     </div>
 
     <script>
-        // Fonction de déverrouillage Ultra-Simple
-        function unlock() {
-            var p = document.getElementById('pass').value.toLowerCase().trim();
-            if(p === "adalabe") {
-                document.getElementById('lock').style.display = 'none';
-                document.getElementById('app').style.display = 'block';
-            } else {
-                alert("Code incorrect ! Tapez : adalabe");
-            }
-        }
-
-        // Calcul CosmoX par minute/seconde
-        function calculCosmo() {
-            var min = parseInt(document.getElementById('m').value);
-            var sec = parseInt(document.getElementById('s').value);
+        // LOGIQUE COSMOX : BASÉE SUR LE TOUR PRÉCÉDENT
+        function calculerCosmo() {
+            var m = parseInt(document.getElementById('min_in').value);
+            var s = parseInt(document.getElementById('sec_in').value);
             
-            if(isNaN(min) || isNaN(sec)) {
-                alert("Entrez les chiffres !");
+            if(isNaN(m) || isNaN(s)) {
+                alert("Erreur : Entrez les minutes et secondes !");
                 return;
             }
 
             document.getElementById('cosmo-res').style.display = "block";
             
-            // Logique de temps
-            var nextS = (sec + 20) % 60;
-            var nextM = (sec + 20 > 59) ? min + 2 : min + 1;
+            // Calcul du prochain tour (+1min 20s par rapport au dernier)
+            var nS = (s + 20) % 60;
+            var nM = (s + 20 > 59) ? m + 2 : m + 1;
             
-            document.getElementById('next-t').innerText = nextM + "mn " + (nextS < 10 ? '0'+nextS : nextS) + "s";
+            document.getElementById('next_t').innerText = nM + "mn " + (nS < 10 ? '0'+nS : nS) + "s";
             
-            // Logique de retrait
-            var rMin = (2.10 + (sec / 30)).toFixed(2);
-            var rMax = (5.50 + (min / 10)).toFixed(2);
+            // Calcul des retraits (Basé sur la seconde du tour)
+            var rMin = (2.20 + (s / 40)).toFixed(2);
+            var rMax = (5.80 + (s / 5)).toFixed(2);
             
-            document.getElementById('min-v').innerText = rMin + "x";
-            document.getElementById('max-v').innerText = rMax + "x";
+            document.getElementById('min_v').innerText = rMin + "x";
+            document.getElementById('max_v').innerText = rMax + "x";
         }
 
-        // Scan Foot (Nom du gagnant uniquement)
-        function scanFoot() {
-            var val = document.getElementById('foot-in').value.trim();
-            if(val.length < 3) return;
+        // LOGIQUE FOOT : NOM DU GAGNANT UNIQUEMENT
+        function trouverGagnant() {
+            var input = document.getElementById('foot_in').value.trim();
+            if(input.length < 3) return;
             
-            var teams = val.split(/vs|VS|-/);
-            var winner = Math.random() > 0.5 ? teams[0] : (teams[1] ? teams[1] : teams[0]);
+            var equipes = input.split(/vs|VS|-/);
+            var win = Math.random() > 0.5 ? equipes[0] : (equipes[1] ? equipes[1] : equipes[0]);
             
-            document.getElementById('foot-res').innerText = "GAGNANT : " + winner.toUpperCase();
+            document.getElementById('foot_res').innerText = "GAGNANT : " + win.toUpperCase();
         }
     </script>
 </body>
